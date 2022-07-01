@@ -1,5 +1,5 @@
-_rpi-robot_ is my personal project of a raspberry pi robot built for fun!
-
+rpi-robot_ is my personal project of a raspberry pi robot built for fun!
+Thank a lot,Ros!
 ![](images/face-tracking.jpg)
 
 **Features**:
