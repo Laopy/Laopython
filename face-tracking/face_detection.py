@@ -10,7 +10,6 @@ import numpy as np
 import onnx
 import onnxruntime as ort
 
-
 def area_of(left_top, right_bottom):
     """
     Compute the areas of rectangles given two corners.
@@ -169,5 +168,6 @@ def detect_first_face(frame):
         )
 
         return (((x1 + x2) * 0.5 / w - 0.5) * 2.0, ((y1 + y2) * 0.5 / h - 0.5) * 2.0)
+        #return ((x + x + w) * 0.5 / w - 0.5), * 2.0,((y + y + h) * 0.5 / h -0.5) * 2.0)
 
     return None

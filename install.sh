@@ -1,3 +1,8 @@
+
+#aliyun pip
+pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
+pip install pip -U
+
 sudo apt update
 
 # Install GPIO Zero
@@ -24,5 +29,7 @@ sudo apt-get install cmake libjpeg8-dev -y
 sudo apt-get install gcc g++ -y
 make
 sudo make install
+
+sudo apt -y install libatlas-base-dev
 
 pip3 install -r requirements.txt
