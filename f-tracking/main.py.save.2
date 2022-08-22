@@ -1,0 +1,83 @@
+from pi_detection import detect_fire
+from simple_pid import PID
+from urllib import request
+import cv2
+import numpy as np
+import socketio
+import time
+from matplotlib import pyplot as plt
+#from twowheel import TwoWheelController
+#from device import Motor
+
+SERVER_ADDR = "192.168.246.147"
+
+#sio = socketio.Client()
+#sio.connect("http://%s:5000" % SERVER_ADDR)
+
+
+def read_from_mjpg_stream():
+    stream = request.urlopen("http://%s:8080/?action=stream" % SERVER_ADDR)
+    bytes = b""
+    while True:
+        bytes += stream.read(1024)
+        a = bytes.find(b"\xff\xd8")
+        b = bytes.find(b"\xff\xd9")
+        if a != -1 and b != -1:
+            jpg = bytes[a : b + 2]
+            bytes = bytes[b + 2 :]
+            frame = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+           
+ #print(frame)
+
+            yield frame
+            #cv2.imshow("rpi-robot - face tracking", frame)
+
+
+
+
+
+if __name__ == "__main__":
+   # start_time = time.time()
+    #last_time = start_time
+            # use to visualization
+    #setpoint, y, x = [], [], []
+
+
+    pid = PID(0.5, 0.2, 0.0, setpoint=0)
+     #x , y, w, h
+    # Control loop
+    #controller = TwoWheelController()
+    for frame in read_from_mjpg_stream():
+        face_center_ndc = detect_fire(frame)
+
+        in_ = face_center_ndc[0] if (face_center_ndc is not None) else 0.0
+        out = pid(in_)
+        print("in=%.2f  out=%.2f" % (in_, out))
+        #controller.set_axis(x=-out)
+"""
+        # setting time index dt
+        current_time = time.time()
+        dt = (current_time - last_time)
+
+        x += [current_time - start_time]
+        y += [out]
+        setpoint += [pid.setpoint]
+
+
+        last_time = current_time
+
+        # Only rotate the robot without moving forward and backward (y is set to 0).
+        #sio.emit("set_axis", {"x": -out, "y": 0.0})
+        if time.time() - start_time > 120:
+            # output visualization from plt
+            plt.plot(x, setpoint, label='target')
+            plt.plot(x, y, label='PID')
+            plt.xlabel('time')
+            plt.ylabel('outcome')
+            plt.legend()
+
+            plt.savefig("/home/pi/rpi-robot/images/show.png")#save in destination
+            # plt.show()
+            exit(0)
+
+"""

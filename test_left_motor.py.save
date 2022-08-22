@@ -1,35 +1,29 @@
-from gpiozero import DistanceSensor
+"""from gpiozero import DistanceSensor
 from time import sleep
 
-sensor = DistanceSensor(echo=23, trigger=22)
+sensor = DistanceSensor(echo=24, trigger=23)
 while True:
-    dis = sensor.distance * 100
-    print("Distance:{:.1f} ".format(dis))
+    print("Distance:{:.1f} ".format(sensor.distance * 100))
     sleep(1)
-    if  dis<10:
-        print("fuck")
-    
-# -*- coding: utf-8 -*
-# -*- coding: utf-8 -*
 """
+# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*
+
 import serial
-import time
-# 打开串口
+import time�
 ser = serial.Serial("/dev/ttyAMA0", 115200)
 def main():
-    while True:
-        # 获得接收缓冲区字符
+    while True:符
         count = ser.inWaiting()
-       # print(count)
         if count != 0:
-            # 读取内容并回显
+            
             recv = ser.read(count)
            # ser.write(recv)
-            print(recv.decode('utf-8'))
-            #print(recv.decode('gb2312'))
-        # 清空接收缓冲区
+            recv = recv.decode('utf-8')
+            yield recv
+            #print(recv.decode('gb2312'))�
         ser.flushInput()
-        # 必要的软件延时
+      
         time.sleep(0.1)
     
 if __name__ == '__main__':
@@ -39,7 +33,7 @@ if __name__ == '__main__':
         if ser != None:
             ser.close()
 """
-"""
+
 from gpiozero import LineSensor
 from signal import pause
 

@@ -1,6 +1,5 @@
 eventlet
 flask
 flask-socketio
-opencv-contrib-python==4.5.4.60
 simple_pid
 

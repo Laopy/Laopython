@@ -1,0 +1,36 @@
+from flask import Flask, render_template, Response,request,jsonify
+import cv2
+import os
+from flask_socketio import SocketIO, join_room, emit, send
+import time
+
+app = Flask(__name__)
+socketio =SocketIO(app)
+if os.environ.get('WERKZEUG_RUN_MAIN') :
+    cap = cv2.VideoCapture(2)
+# use 0 for web camera
+# for cctv camera use rtsp://username:password@ip_address:554/user=username_password='password'_channel=channel_number_stream=0.sdp' instead of camera
+# for local webcam use cv2.VideoCapture(0)
+
+@app.route('/js/nipplejs.min.js')
+def send_js():
+    return render_template("js/nipplejs.min.js")
+
+@app.route('/')
+def index():
+
+    # return app.send_static_file("index.html")
+    return render_template('index.html')
+
+@socketio.on("set_axis")
+def set_axis(data):
+    print("x is {:.2f} y is {:.2f}".format(data['x'],-data['y']))
+    # return jsonify(args=args, form=form)
+    # controller.set_axis(x=data["x"], y=data["y"])
+
+if __name__ == '__main__':
+
+    socketio.run(app, debug=True, host="0.0.0.0")
+
+
+

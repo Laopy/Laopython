@@ -1,0 +1,49 @@
+from pi_detection import detect_fire
+from simple_pid import PID
+from urllib import request
+import cv2
+import numpy as np
+import socketio
+import time
+from matplotlib import pyplot as plt
+#from twowheel import TwoWheelController
+#from device import Motor
+
+SERVER_ADDR = "192.168.246.147"
+
+#sio = socketio.Client()
+#sio.connect("http://%s:5000" % SERVER_ADDR)
+
+
+def read_from_mjpg_stream():
+    stream = request.urlopen("http://%s:8080/?action=stream" % SERVER_ADDR)
+    bytes = b""
+    while True:
+        bytes += stream.read(1024)
+        a = bytes.find(b"\xff\xd8")
+        b = bytes.find(b"\xff\xd9")
+        if a != -1 and b != -1:
+            jpg = bytes[a : b + 2]
+            bytes = bytes[b + 2 :]
+            frame = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+            #print(frame)
+
+            yield frame
+            cv2.imshow("rpi-robot - face tracking", frame)
+
+
+
+
+
+if __name__ == "__main__":
+    start_time = time.time()
+    last_time = start_time
+            # 用于输出结果可视化
+    setpoint, y, x = [], [], []
+                # 设置系统运行时间
+
+    pid = PID(0.5, 0.2, 0.0, setpoint=0)
+     #x , y, w, h
+    # Control loop
+    #controller = TwoWheelController()
+    for frame in read_

@@ -1,21 +1,18 @@
-from device import Motor
-from time import sleep
-from twowheel import TwoWheelController
 #from CSDN「https://blog.csdn.net/Zhangrx_/article/details/108796306」
-from simple_pid import PID
+
+
 import cv2
 import numpy as np
 
 olderr = np.seterr(all='ignore')#ignore bugw
 
-cap = cv2.VideoCapture(0) #200~299 for linux or 0 for win
-cap.set(cv2.CAP_PROP_FPS, 10)
+cap = cv2.VideoCapture(200) #200~299 for linux or 0 for win
 #img = cv2.imread('fire/fire4.jpeg')
 redThre = 115  # 115~135红色分量阈值
 sThre = 55  # 55~65饱和度阈值
-pid = PID(0.7,0,0.35, setpoint=0)
 
-controller = TwoWheelController()
+
+count = 0
 
 while True:
     ret, frame = cap.read()
@@ -53,10 +50,9 @@ while True:
 
         contours, _ = cv2.findContours(ProcImg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         #ResImg = frame.copy()
-        x= y =w = h =0
+
         for c in range(0, len(contours)):
             # 获取矩形的左上角坐标(x,y)，以及矩形的宽和高w、h
-            
             x, y, w, h = cv2.boundingRect(contours[c])
             l_top = (x, y)
             r_bottom = (x + w, y + h)
@@ -71,27 +67,16 @@ while True:
                 0.5,
                 (255, 255, 255),
                 1, )
-            x -=320
-            go = 0.0
-            in_ = (x+0.5*w)/340
-            if  (-0.4<in_<0.4):
-                go = 0.6
-                in_=0.0
-            out = pid(in_)
-            if (out>0.65):
-                out = 0.55
-            if (out<-0.65):
-                out = -0.55
-            print(in_,-out)
-            controller.set_axis(x=-out,y=go)
-            x = 0.0
-            
-        #cv2.imshow("pi_vision",frame)
+
+       # cv2.imshow("pi_vision",frame)
+        count += 1
         #if count == 1 :
             #cv2.imwrite("images/test/"+ str(count) + '.jpg',frame)
+
+    if (cv2.waitKey(1) & 0xFF == ord("q")) :
+        break
 
 
 
 cap.release()
 cv2.destroyAllWindows()
-exit()

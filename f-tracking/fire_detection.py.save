@@ -1,0 +1,36 @@
+from time import sleep
+from twowheel import TwoWheelController
+#from CSDN「https://blog.csdn.net/Zhangrx_/article/details/108796306」
+from simple_pid import PID
+import cv2
+from pi_detection import detect_fire
+olderr = np.seterr(all='ignore')#ignore bugw
+
+cap = cv2.VideoCapture(0) #200~299 for linux or 0 for win
+cap.set(cv2.CAP_PROP_FPS, 10)
+#img = cv2.imread('fire/fire4.jpeg')
+redThre = 115  # 115~135红色分量阈值
+sThre = 55  # 55~65饱和度阈值
+pid = PID(0.7,0,0.35, setpoint=0)
+
+controller = TwoWheelController()
+
+while True:
+    ret, frame = cap.read()
+    if ret:
+            
+            go = 0.0
+            in_ = detect_fire(frame)[0]
+            if  (-0.4<in_<0.4):
+                go = 0.6
+                in_=0.0
+            out = pid(in_)
+            if (out>0.65):
+                out = 0.55
+            if (out<-0.65):
+                out = -0.55
+            print(in_,-out)
+            controller.set_axis(x=-out,y=go)
+            x = 0.0
+            
+      

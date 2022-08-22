@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="icon" href="favicon.ico" />
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <title>rpi-robot control</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        height: 100vh;
+      }
+      .fit {
+        /* width: 100%; */
+        max-width: 100%;
+        max-height: 100vh;
+        display: block;
+      }
+    </style>
+  </head>
+  <body id="container">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
+    <script src="js/nipplejs.min.js"></script>
+
+    <div id="sensor">
+    <p >1</p>
+    </div>
+
+
+    <script language="javascript">
+      document.write(
+        '<img class="fit" src="//' +
+          '192.168.180.147' +
+          ':8080/?action=stream" class="img-responsive" />'
+      );
+
+      var socket = io();
+      socket.on("connect", function () {
+        console.log("connected to flask-socketio.");
+      });
+      //send sensor message
+       socket.on('server_response', function(res) {
+
+            var msg = res.data;
+            console.log(msg);
+            document.getElementById("sensor").innerHTML = '<p>'+msg+'</p>';
+        });
+
+      // Use virtual joystick to control robot movement.
+      var joystick = nipplejs.create({
+        zone: document.getElementById("container"),
+        color: "red",
+        size: 150,
+      });
+
+      var startPos = null;
+      joystick.on("start", function (evt, data) {
+        startPos = data.position;
+      });
+
+      joystick.on("move", function (evt, data) {
+        if (startPos == null) return;
+        var x = ((data.position.x - startPos.x) / joystick.options.size) * 2;
+        var y = ((data.position.y - startPos.y) / joystick.options.size) * 2;
+        socket.emit("set_axis", { x: x, y: y });
+      });
+
+      joystick.on("end", function (evt, data) {
+        if (startPos == null) return;
+        socket.emit("set_axis", { x: 0, y: 0 });
+      });
+    </script>
+  </body>
+</html>

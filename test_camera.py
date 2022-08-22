@@ -6,9 +6,9 @@ Img_dir = "images/Laopy/"    #"Img_dir" is dir for cv2 imwrite
 
 
 
-cap = cv2.VideoCapture(200)#200~299 for linux or 0 for win
+cap = cv2.VideoCapture(202)#200~299 for linux or 0 for win
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_alt.xml')
-print(face_cascade)
+#print(face_cascade)
 
 count = 0
 

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -23,29 +24,37 @@
     </style>
   </head>
   <body id="container">
-    <script
-      src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
-      integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I="
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
     <script src="js/nipplejs.min.js"></script>
+
+    <div id="sensor">
+    <p >1</p>
+    
+    </div>
+
 
     <script language="javascript">
       document.write(
-        '<img class="fit" src="//' +
-          window.location.hostname +
-          ':8080/?action=stream" class="img-responsive" />'
+        '<img src="{{ url_for('video_feed') }}" width="fit">'
       );
 
       var socket = io();
       socket.on("connect", function () {
         console.log("connected to flask-socketio.");
       });
+      //send sensor message
+       socket.on('server_response', function(res) {
+
+            var msg = res.data;
+            console.log(msg);
+            document.getElementById("sensor").innerHTML = '<p>'+msg+'</p>';
+        });
 
       // Use virtual joystick to control robot movement.
       var joystick = nipplejs.create({
         zone: document.getElementById("container"),
-        color: "blue",
+        color: "red",
         size: 150,
       });
 

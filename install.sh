@@ -25,11 +25,11 @@ wget https://github.com/jacksonliam/mjpg-streamer/archive/master.zip
 unzip master.zip
 rm master.zip
 cd mjpg-streamer-master/mjpg-streamer-experimental
-sudo apt-get install cmake libjpeg8-dev -y
+sudo apt-get install libcurl3
 sudo apt-get install gcc g++ -y
-make
-sudo make install
+#make
+#sudo make install
 
 sudo apt -y install libatlas-base-dev
-
+cd ~/rpi-robot/
 pip3 install -r requirements.txt

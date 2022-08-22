@@ -1,11 +1,8 @@
-# -*- coding: utf-8 -*-
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 from twowheel import TwoWheelController
 from time import sleep
 import serial
-from threading import Lock
-
 
 async_mode = None
 thread = None
@@ -45,17 +42,17 @@ def background_thread():
         # print(count)
         if count != 0:
             # 读取内容并回显
-            recv = ser.read(count).decode('utf-8')
+            recv = ser.read(count)
             # ser.write(recv)
-            print(recv)
-            socketio.emit('server_response',
-                          {
-                              'data': recv})
+            print(recv.decode('utf-8'))
+
             # Chinese print(recv.decode('gb2312'))
 
         ser.flushInput()
-        sleep(0.1)
-       
+        time.sleep(0.1)
+        socketio.emit('server_response',
+                      {
+    'data': recv})
 if __name__ == "__main__":
     #controller = TwoWheelController()
     socketio.run(app, debug=True, host="0.0.0.0")
